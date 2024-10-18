@@ -24,7 +24,7 @@ O prazo estimado para a conclusão do projeto Oráculo é de 6 meses, com iníci
 
 # 💲Orçamento
 
-O orçamento estimado para o projeto Oráculo é de R$ 150.000,00. Este valor inclui custos de desenvolvimento de software, infraestrutura de servidores, design de interface, marketing inicial e uma reserva para contingências. A alocação detalhada dos recursos será revisada mensalmente para garantir a otimização dos gastos e o cumprimento dos objetivos do projeto.
+O orçamento estimado para o projeto Oráculo é de R$ 25.000. Este valor inclui custos de desenvolvimento de software, infraestrutura de servidores, design de interface, marketing inicial e uma reserva para contingências. A alocação detalhada dos recursos será revisada mensalmente para garantir a otimização dos gastos e o cumprimento dos objetivos do projeto.
 
 # ⚙Ferramentas
 
