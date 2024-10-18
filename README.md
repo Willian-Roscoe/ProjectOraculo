@@ -13,10 +13,10 @@
 # ‼Marca
 Fizemos a Prototipagem no Canva
 Feito para web site:
-<a href="https://sonofeliz.my.canva.site/oraculo">PROTOTIPO WEBSITE</a>
+<a target="_blank" href="https://sonofeliz.my.canva.site/oraculo">PROTOTIPO WEBSITE</a>
 
 Feito para Web Aplicativo:
-<a href="https://sonofeliz.my.canva.site/or-culo-mobile">WEB APLICATIVO</a>
+<a target="_blank" href="https://sonofeliz.my.canva.site/or-culo-mobile">WEB APLICATIVO</a>
 
 LOGO DA EMPRESA
 
