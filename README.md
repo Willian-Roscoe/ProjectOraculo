@@ -3,7 +3,7 @@
 ## 👨‍💼Colaboradores
 
 - Rudson Martins Botelho
-- Willam Roscoe Barbosa
+- Willian Barbosa Roscoe
 - Vinícius Andrade
 
 # ✔Objetivo
