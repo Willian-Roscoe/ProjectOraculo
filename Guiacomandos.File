@@ -1,0 +1,134 @@
+Aqui está um guia com os comandos mais comuns de **HTML**, **CSS** e **JavaScript**. Você pode usá-lo para lembrar e consultar conforme desenvolve seu projeto.
+
+---
+
+### **HTML - Principais Comandos**
+
+- `<!DOCTYPE html>`: Define o tipo de documento como HTML5.
+- `<html>`: Elemento raiz de um documento HTML.
+- `<head>`: Contém metadados sobre o documento, como título e links para CSS.
+- `<body>`: Define o conteúdo visível da página.
+- `<h1> a <h6>`: Cabeçalhos de diferentes tamanhos, de `<h1>` (maior) a `<h6>` (menor).
+- `<p>`: Parágrafo de texto.
+- `<a href="url">`: Link para outra página ou recurso.
+- `<img src="url" alt="descrição">`: Imagem com um link de origem (URL) e texto alternativo.
+- `<div>`: Contêiner de bloco para agrupar elementos.
+- `<span>`: Contêiner de linha para agrupar partes de texto ou outros elementos.
+- `<ul>`: Lista não ordenada.
+- `<ol>`: Lista ordenada (numerada).
+- `<li>`: Item de lista.
+- `<input type="text">`: Campo de entrada de texto.
+- `<button>`: Botão clicável.
+- `<form>`: Usado para criar formulários de envio de dados.
+- `<table>`: Tabela de dados.
+- `<tr>`: Linha da tabela.
+- `<td>`: Célula de tabela.
+- `<th>`: Cabeçalho de coluna da tabela.
+
+---
+
+### **CSS - Comandos e Propriedades Comuns**
+
+- **Seletores**:
+  - `*`: Seleciona todos os elementos.
+  - `#id`: Seleciona um elemento com um ID específico (exemplo: `#header`).
+  - `.class`: Seleciona todos os elementos com uma classe específica (exemplo: `.menu`).
+  - `elemento`: Seleciona todos os elementos do tipo especificado (exemplo: `p`, `div`).
+
+- **Propriedades Comuns**:
+  - `color`: Cor do texto (exemplo: `color: #333;`).
+  - `background-color`: Cor de fundo (exemplo: `background-color: #f4f4f4;`).
+  - `font-size`: Tamanho da fonte (exemplo: `font-size: 16px;`).
+  - `font-family`: Define a família de fontes (exemplo: `font-family: Arial, sans-serif;`).
+  - `margin`: Espaçamento externo (exemplo: `margin: 20px;`).
+  - `padding`: Espaçamento interno (exemplo: `padding: 10px;`).
+  - `border`: Define bordas ao redor de um elemento (exemplo: `border: 1px solid #000;`).
+  - `display`: Define o comportamento de exibição (exemplo: `display: block;` ou `display: flex;`).
+  - `width`: Largura de um elemento (exemplo: `width: 100%;`).
+  - `height`: Altura de um elemento (exemplo: `height: 50px;`).
+  - `text-align`: Alinhamento de texto (exemplo: `text-align: center;`).
+  - `position`: Define a posição de um elemento (exemplo: `position: relative;` ou `position: absolute;`).
+  - `flex`: Usado em layouts flexíveis (exemplo: `display: flex;`).
+
+---
+
+### **JavaScript - Comandos e Funções Comuns**
+
+- **Declaração de Variáveis**:
+  - `var`, `let`, `const`: Usados para declarar variáveis (exemplo: `let nome = "João";`).
+  
+- **Tipos de Dados**:
+  - Números (`let num = 10;`)
+  - Strings (`let texto = "Olá";`)
+  - Booleanos (`let ativo = true;`)
+
+- **Operadores**:
+  - Aritméticos: `+`, `-`, `*`, `/` (exemplo: `let soma = 5 + 3;`)
+  - Comparação: `==`, `===`, `!=`, `!==`, `>`, `<`, `>=`, `<=`
+
+- **Estruturas de Controle**:
+  - `if`, `else if`, `else`: Condicional (exemplo: `if (idade >= 18) {...}`)
+  - `for`: Loop para repetir código um número definido de vezes (exemplo: `for (let i = 0; i < 10; i++) {...}`)
+  - `while`: Loop para repetir enquanto a condição for verdadeira (exemplo: `while (num < 10) {...}`)
+  
+- **Funções**:
+  - Declaração de função:
+    ```javascript
+    function saudacao(nome) {
+        return "Olá, " + nome;
+    }
+    ```
+  - Função anônima:
+    ```javascript
+    let saudacao = function(nome) {
+        return "Olá, " + nome;
+    };
+    ```
+
+- **Manipulação de DOM**:
+  - `document.getElementById("id")`: Seleciona um elemento pelo seu ID.
+  - `document.querySelector(".classe")`: Seleciona o primeiro elemento que corresponde ao seletor CSS.
+  - `element.innerHTML`: Define ou obtém o conteúdo HTML de um elemento.
+  - `element.style.property`: Altera o estilo de um elemento (exemplo: `element.style.backgroundColor = "blue";`).
+
+- **Eventos**:
+  - `addEventListener`: Adiciona um evento a um elemento (exemplo: `button.addEventListener("click", function() {...});`).
+  - Eventos comuns: `click`, `mouseover`, `keydown`, `submit`.
+
+- **Funções de Tempo**:
+  - `setTimeout`: Executa uma função após um atraso (exemplo: `setTimeout(function, 3000);`).
+  - `setInterval`: Executa uma função repetidamente em intervalos de tempo (exemplo: `setInterval(function, 1000);`).
+
+---
+
+### Exemplo simples de uso combinado:
+**HTML:**
+
+```html
+<button id="meuBotao">Clique Aqui</button>
+<p id="mensagem"></p>
+```
+
+**CSS:**
+
+```css
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+}
+```
+
+**JavaScript:**
+
+```javascript
+document.getElementById("meuBotao").addEventListener("click", function() {
+    document.getElementById("mensagem").innerHTML = "Você clicou no botão!";
+});
+```
+
+---
+
+Esse guia te ajudará a lembrar os comandos mais comuns de HTML, CSS e JavaScript e como usá-los em seu projeto.
