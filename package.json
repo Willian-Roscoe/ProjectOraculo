@@ -1,0 +1,10 @@
+{
+    "name": "projeto-api-drive",
+    "version": "1.0.0",
+    "description": "Projeto para acessar a API do Google Drive",
+    "main": "drive.js",
+    "dependencies": {
+        "googleapis": "^105.0.0",
+        "open": "^8.4.2"
+    }
+}

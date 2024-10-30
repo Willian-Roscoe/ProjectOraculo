@@ -1,0 +1,8 @@
+ID do cliente
+412923815547-89ec0hpr5u3ft4ragh5qqcqtflplrmif.apps.googleusercontent.com
+Chave secreta do cliente
+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
+Data da criação
+28 de outubro de 2024 16:28:03 GMT-3
+Status
+Ativada
