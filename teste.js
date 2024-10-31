@@ -1,6 +1,10 @@
 const { google } = require('googleapis');
-const { readFileSync, existsSync, writeFileSync, createWriteStream } = require('fs');
+const { readFileSync, existsSync, writeFileSync, mkdirSync, createWriteStream } = require('fs');
 const { createInterface } = require('readline');
+const express = require('express');
+const path = require('path');
+const app = express();
+const PORT = process.env.PORT || 3000;
 
 const CREDENTIALS_PATH = 'credentials.json';
 const TOKEN_PATH = 'token.json';
@@ -23,64 +27,90 @@ async function authenticate(credentials) {
     });
 
     console.log('Abra este URL para autenticação:', authUrl);
-    // Aqui você deve incluir a parte que lida com a autenticação
+    const rl = createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
 
-    // Após a autenticação, você deve salvar o token
-    // e retornar o oAuth2Client
+    const code = await new Promise(resolve => rl.question('Digite o código da URL de autenticação: ', resolve));
+    rl.close();
+
+    const { tokens } = await oAuth2Client.getToken(code);
+    oAuth2Client.setCredentials(tokens);
+
+    writeFileSync(TOKEN_PATH, JSON.stringify(tokens));
+    console.log('Token armazenado em', TOKEN_PATH);
+    return oAuth2Client;
 }
 
-// Função para listar arquivos
-async function listAllFiles(auth) {
+// Função para listar arquivos de uma pasta específica
+async function listFilesInFolder(auth, folderId) {
     const drive = google.drive({ version: 'v3', auth });
     const res = await drive.files.list({
-        pageSize: 10,
+        q: `'${folderId}' in parents`,
         fields: 'files(id, name)',
+        spaces: 'drive'
     });
 
     const files = res.data.files;
-
-    if (files.length === 0) {
-        console.log('Nenhum arquivo encontrado.');
-    } else {
-        console.log('Arquivos encontrados:');
-        files.forEach((file) => {
-            console.log(`${file.name} (ID: ${file.id})`);
-        });
-    }
+    return files;
 }
 
-// Função para baixar um arquivo
-async function downloadFile(auth, fileId, destPath) {
-    const drive = google.drive({ version: 'v3', auth });
-    const dest = createWriteStream(destPath);
-    const res = await drive.files.get({
-        fileId: fileId,
-        alt: 'media',
-    }, { responseType: 'stream' });
+// Rota principal
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/index.html');
+});
 
-    res.data
-        .on('end', () => {
-            console.log('Download concluído.');
-        })
-        .on('error', (err) => {
-            console.error('Erro durante o download', err);
-        })
-        .pipe(dest);
-}
-
-// Função principal
-async function main() {
+// Rota para listar arquivos
+app.get('/list-files', async (req, res) => {
     const credentials = JSON.parse(readFileSync(CREDENTIALS_PATH, 'utf-8'));
     const auth = await authenticate(credentials);
+    const folderId = '1W6ql2w0aJgqso_t6ZprP5Iy3m9WZcsbM'; // Substitua pelo ID da pasta que você deseja listar
+    const files = await listFilesInFolder(auth, folderId);
+    res.json(files);
+});
 
-    // Listar todos os arquivos no Google Drive
-    await listAllFiles(auth);
+// Rota para baixar arquivos
+app.get('/download-file', async (req, res) => {
+    const fileId = req.query.fileId;
+    const fileName = req.query.fileName;
+    const auth = await authenticate(JSON.parse(readFileSync(CREDENTIALS_PATH, 'utf-8')));
 
-    // Após listar, você pode baixar um arquivo específico usando seu ID
-    const fileId = '1XyEEgqKURhNSdHzudDuw29MBGAYxS40P'; // Substitua pelo ID do arquivo que deseja baixar
-    const destPath = 'C:/Users/ead/Documents/GitHub/ProjectOraculo/meu_arquivo.png'; // Substitua pelo caminho e nome do arquivo
-    await downloadFile(auth, fileId, destPath);
-}
+    const drive = google.drive({ version: 'v3', auth });
+    const userHomeDir = process.env.HOME || process.env.USERPROFILE; // Diretório do usuário
+    const destPath = path.join(userHomeDir, 'Downloads', fileName); // Caminho para a pasta Downloads
 
-// Chame a função principal
-main().catch(console.error);
+    // Verifique e crie o diretório "downloads" se não existir
+    const dirPath = path.join(userHomeDir, 'Downloads'); // Caminho para a pasta Downloads
+    if (!existsSync(dirPath)) {
+        mkdirSync(dirPath, { recursive: true });
+    }
+
+    const dest = createWriteStream(destPath);
+    
+    drive.files.get({ fileId: fileId, alt: 'media' }, { responseType: 'stream' }, (err, response) => {
+        if (err) return res.status(500).send('Erro ao baixar o arquivo');
+
+        response.data.pipe(dest);
+
+        dest.on('finish', () => {
+            res.download(destPath, fileName, (err) => {
+                if (err) {
+                    console.error('Erro ao enviar o arquivo:', err);
+                    res.status(500).send('Erro ao enviar o arquivo');
+                } else {
+                    console.log('Arquivo enviado com sucesso');
+                }
+            });
+        });
+
+        dest.on('error', (err) => {
+            console.error('Erro durante o download', err);
+            res.status(500).send('Erro durante o download');
+        });
+    });
+});
+
+app.listen(PORT, () => {
+    console.log(`Servidor rodando em http://localhost:${PORT}`);
+});
