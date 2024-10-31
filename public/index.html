@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oráculo - Lista de Arquivos</title>
+    <link rel="stylesheet" href="main.css">
+    <style>
+        .selected {
+            background-color: #d1e7dd; /* Cor de fundo para a linha selecionada */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="top-bar">
+            <img src="IMAGENS/logo Oráculo.png" alt="Oráculo" class="logo">
+            <div class="turma-info">
+                <span>APB 029.002</span>
+                <span>Turma</span>
+            </div>
+        </div>
+    </header>
+    <main class="container">
+        <h2>LISTA DE ARQUIVOS</h2>
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Digite sua pesquisa">
+        </div>
+        <div class="error-message" style="display: none; color: red; text-align: center; margin-top: 20px;">
+            Não foi possível carregar os arquivos. Por favor, tente novamente mais tarde.
+        </div>
+        <div class="file-table">
+            <table id="fileTable">
+                <thead>
+                    <tr>
+                        <th>Selecionar</th>
+                        <th>Nome do Arquivo</th>
+                        <th>ID do Arquivo</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="actions">
+            <button class="btn" onclick="baixarArquivos()">Baixar Arquivos Selecionados</button>
+        </div>
+    </main>
+    <script>
+        const BASE_URL = '/list-files'; // URL do endpoint para listar arquivos
+
+        function carregarArquivos(query = '') {
+            console.log("Iniciando requisição para listar arquivos...");
+            fetch(`${BASE_URL}?q=${encodeURIComponent(query)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Erro na resposta do servidor: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Dados recebidos:", data);
+                    const tableBody = document.getElementById('fileTable').getElementsByTagName('tbody')[0];
+                    tableBody.innerHTML = ''; // Limpar tabela anterior
+                    
+                    // Remover duplicatas (caso existam)
+                    const uniqueFiles = Array.from(new Set(data.map(file => JSON.stringify(file))))
+                        .map(file => JSON.parse(file));
+
+                    // Exibir os arquivos únicos
+                    uniqueFiles.forEach(file => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td><input type="checkbox"></td>
+                            <td>${file.name}</td>
+                            <td>${file.id}</td>
+                        `;
+                        row.addEventListener('click', (event) => {
+                            if (event.target.type !== 'checkbox') {
+                                const checkbox = row.querySelector('input[type="checkbox"]');
+                                checkbox.checked = !checkbox.checked;
+                            }
+                            row.classList.toggle('selected', row.querySelector('input[type="checkbox"]').checked);
+                        });
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar arquivos:', error);
+                    const errorMessage = document.querySelector('.error-message');
+                    errorMessage.style.display = 'block';
+                });
+        }
+
+        function baixarArquivos() {
+            const checkboxes = document.querySelectorAll('#fileTable tbody input[type="checkbox"]:checked');
+            const downloads = Array.from(checkboxes).map(checkbox => {
+                const row = checkbox.closest('tr');
+                const fileId = row.cells[2].innerText;
+                const fileName = row.cells[1].innerText;
+                return fetch(`/download-file?fileId=${fileId}&fileName=${encodeURIComponent(fileName)}`)
+                    .then(response => {
+                        if (!response.ok) throw new Error('Erro ao baixar o arquivo');
+                        return response.blob();
+                    })
+                    .then(blob => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = fileName;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                    })
+                    .catch(error => console.error('Erro ao baixar arquivo:', error));
+            });
+
+            // Executar todos os downloads em paralelo
+            Promise.all(downloads).catch(error => console.error('Erro ao processar downloads:', error));
+        }
+
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchValue = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#fileTable tbody tr');
+            rows.forEach(row => {
+                const fileName = row.cells[1].innerText.toLowerCase();
+                row.style.display = fileName.includes(searchValue) ? '' : 'none';
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            carregarArquivos();
+        });
+    </script>
+</body>
+</html>

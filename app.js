@@ -6,6 +6,9 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Middleware para servir arquivos estáticos 
+app.use(express.static(path.join(__dirname, 'public')));
+
 const CREDENTIALS_PATH = 'credentials.json';
 const TOKEN_PATH = 'token.json';
 const SCOPES = ['https://www.googleapis.com/auth/drive.readonly'];
@@ -58,8 +61,9 @@ async function listFilesInFolder(auth, folderId) {
 
 // Rota principal
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
 
 // Rota para listar arquivos
 app.get('/list-files', async (req, res) => {
@@ -70,18 +74,25 @@ app.get('/list-files', async (req, res) => {
     res.json(files);
 });
 
+
 // Rota para baixar arquivos
 app.get('/download-file', async (req, res) => {
     const fileId = req.query.fileId;
     const fileName = req.query.fileName;
-    const auth = await authenticate(JSON.parse(readFileSync(CREDENTIALS_PATH, 'utf-8')));
 
+    // Verifique se fileId e fileName foram fornecidos
+    if (!fileId || !fileName) {
+        return res.status(400).send('ID do arquivo e nome do arquivo são necessários.');
+    }
+
+    const auth = await authenticate(JSON.parse(readFileSync(CREDENTIALS_PATH, 'utf-8')));
     const drive = google.drive({ version: 'v3', auth });
+
     const userHomeDir = process.env.HOME || process.env.USERPROFILE; // Diretório do usuário
     const destPath = path.join(userHomeDir, 'Downloads', fileName); // Caminho para a pasta Downloads
 
-    // Verifique e crie o diretório "downloads" se não existir
-    const dirPath = path.join(userHomeDir, 'Downloads'); // Caminho para a pasta Downloads
+    // Verifique e crie o diretório "Downloads" se não existir
+    const dirPath = path.join(userHomeDir, 'Downloads'); 
     if (!existsSync(dirPath)) {
         mkdirSync(dirPath, { recursive: true });
     }
@@ -110,6 +121,7 @@ app.get('/download-file', async (req, res) => {
         });
     });
 });
+
 
 app.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}`);
